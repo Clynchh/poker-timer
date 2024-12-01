@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Timer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap'); /* Digital clock font */
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000; /* Black background */
+            color: white;
+            transition: background-color 0.1s ease; /* Smooth background color transition */
+        }
+        #timerDisplay {
+            font-family: 'Orbitron', monospace; /* Digital clock font */
+            font-size: 5.6em; /* Shrunk the font by 50% (originally 11.2em) */
+            margin: 20px;
+            background-color: #000; /* Black background to match */
+            color: #ff4040; /* Bright red font */
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 300px;
+        }
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 15px;
+            font-size: 1.2em;
+            width: 100px;
+            background-color: #555; /* Grey buttons */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #777; /* Slightly lighter grey on hover */
+        }
+        button:disabled {
+            background-color: #333; /* Disabled button looks darker */
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div id="timerDisplay">00:15</div>
+
+    <div class="button-container">
+        <button id="startResetBtn">Start</button>
+        <button id="stopBtn">Stop</button>
+        <button id="addTimeBtn" disabled>Add 15s</button>
+    </div>
+
+    <script>
+        let timerInterval;
+        const originalTime = 15; // Fixed normal time (15 seconds)
+        const extensionTime = 15; // Fixed extension time (15 seconds)
+        let remainingTime = originalTime;
+        let isRunning = false;
+        let extensionCount = 0; // To track the number of extensions
+
+        const timerDisplay = document.getElementById("timerDisplay");
+        const startResetBtn = document.getElementById("startResetBtn");
+        const stopBtn = document.getElementById("stopBtn");
+        const addTimeBtn = document.getElementById("addTimeBtn");
+
+        function displayTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const sec = seconds % 60;
+            timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+        }
+
+        function flashScreenAndReset() {
+            // Flash the screen white
+            document.body.style.backgroundColor = "#fff";
+            setTimeout(() => {
+                document.body.style.backgroundColor = "#000"; // Revert back to black
+                resetTimer(); // Reset and continue counting
+            }, 200); // Flash for 200 milliseconds
+        }
+
+        function startResetTimer() {
+            if (!isRunning) {
+                // Start timer
+                startTimer();
+                startResetBtn.textContent = "Reset"; // Change to "Reset"
+                addTimeBtn.disabled = false; // Enable the "Add 15s" button
+            } else {
+                // Reset timer
+                resetTimer();
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            displayTime(remainingTime);
+            timerInterval = setInterval(() => {
+                if (remainingTime > 0) {
+                    remainingTime--;
+                    displayTime(remainingTime);
+                } else {
+                    clearInterval(timerInterval);
+                    flashScreenAndReset(); // Flash the screen and reset when timer hits zero
+                }
+            }, 1000);
+            isRunning = true;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            remainingTime = originalTime; // Reset to 15 seconds
+            extensionCount = 0; // Reset extension count
+            displayTime(remainingTime);
+            startTimer(); // Start timer again
+            addTimeBtn.disabled = false; // Enable the "Add 15s" button after reset
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            remainingTime = originalTime; // Reset to 15 seconds
+            displayTime(remainingTime);
+            isRunning = false;
+            startResetBtn.textContent = "Start"; // Change to "Start"
+            addTimeBtn.disabled = true; // Disable the "Add 15s" button
+        }
+
+        function addTime() {
+            if (extensionCount < 10) { // Limit to 10 extensions
+                remainingTime += extensionTime; // Add 15 seconds
+                displayTime(remainingTime);
+                extensionCount++; // Increment extension count
+            }
+
+            if (extensionCount >= 10) {
+                addTimeBtn.disabled = true; // Disable the button after 10 extensions
+            }
+        }
+
+        // Event Listeners
+        startResetBtn.addEventListener("click", startResetTimer);
+        stopBtn.addEventListener("click", stopTimer);
+        addTimeBtn.addEventListener("click", addTime);
+
+        // Initialize timer display
+        displayTime(remainingTime);
+    </script>
+</body>
+</html>
