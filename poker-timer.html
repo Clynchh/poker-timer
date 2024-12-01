@@ -21,22 +21,18 @@
         }
         #timerDisplay {
             font-family: 'Orbitron', monospace; /* Digital clock font */
-            font-size: 5.6em; /* Shrunk the font by 50% (originally 11.2em) */
-            margin: 20px;
+            font-size: 6em; /* Shrunk the font by 50% (originally 11.2em) */
             background-color: #000; /* Black background to match */
             color: #ff4040; /* Bright red font */
-            padding: 10px 20px;
-            border-radius: 10px;
             text-align: center;
             width: 300px;
+            padding: -10px;
         }
         .button-container {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
+            gap: 10px;        }
         button {
-            padding: 15px;
+            padding: 15px 5px;
             font-size: 1.2em;
             width: 100px;
             background-color: #555; /* Grey buttons */
@@ -45,6 +41,7 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            transform: scale(-1, -1);
         }
         button:hover {
             background-color: #777; /* Slightly lighter grey on hover */
@@ -56,14 +53,14 @@
     </style>
 </head>
 <body>
-    <div id="timerDisplay">00:15</div>
+    
 
     <div class="button-container">
         <button id="startResetBtn">Start</button>
         <button id="stopBtn">Stop</button>
         <button id="addTimeBtn" disabled>Add 15s</button>
     </div>
-
+    <div id="timerDisplay">00:15</div>
     <script>
         let timerInterval;
         const originalTime = 15; // Fixed normal time (15 seconds)
